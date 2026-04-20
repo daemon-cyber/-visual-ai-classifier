@@ -1,0 +1,28 @@
+services:
+  # ── Backend (Python / Flask + TensorFlow) ────────────────────────────────
+  - type: web
+    name: visual-ai-classifier-api
+    runtime: python
+    rootDir: backend
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PORT
+        value: 10000
+      - key: DEBUG
+        value: false
+      - key: PYTHONUNBUFFERED
+        value: true
+
+  # ── Frontend (React / Vite static site) ──────────────────────────────────
+  - type: static
+    name: visual-ai-classifier-frontend
+    rootDir: frontend
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        # Replace with the actual URL of your deployed backend above
+        value: https://visual-ai-classifier-api.onrender.com
